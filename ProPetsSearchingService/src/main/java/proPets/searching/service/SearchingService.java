@@ -1,12 +1,12 @@
 package proPets.searching.service;
 
-import proPets.searching.dto.ConvertedPostDto;
+import proPets.searching.dto.RequestDto;
 
 public interface SearchingService {
 
-	Iterable<String> findPostsByRadius(ConvertedPostDto convertedPostDto);
+	Iterable<String> findPostsByDistance (String address, String flag);
 
-	void addPost(ConvertedPostDto convertedPostDto);
+	void addPost(RequestDto requestDto);
 	
 	
 

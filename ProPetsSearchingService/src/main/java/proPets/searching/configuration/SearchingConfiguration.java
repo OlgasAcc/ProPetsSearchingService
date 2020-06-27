@@ -22,24 +22,31 @@ public class SearchingConfiguration {
 		return new RestTemplate();
 	}
 	
-	@Value("${radius.dog}")
-	String radiusDog;
+	@Value("${distance.dog}")
+	double distanceDog;
 	
-	public String getRadiusDog() {
-		return radiusDog;
+	public double getDistanceDog() {
+		return distanceDog;
 	}
 	
-	@Value("${radius.cat}")
-	String radiusCat;
+	@Value("${distance.cat}")
+	double distanceCat;
 	
-	public String getRadiusCat() {
-		return radiusCat;
+	public double getDistanceCat() {
+		return distanceCat;
 	}
 	
-	@Value("${radius.birds}")
-	String radiusBirds;
+	@Value("${distance.bird}")
+	double distanceBird;
 	
-	public String getRadiusBirds() {
-		return radiusBirds;
+	public double getDistanceBird() {
+		return distanceBird;
+	}
+	
+	@Value("${distance.general}")
+	double distanceGeneral;
+	
+	public double getDistanceGeneral() {
+		return distanceGeneral;
 	}
 }
