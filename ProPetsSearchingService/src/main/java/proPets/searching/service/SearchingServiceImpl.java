@@ -68,6 +68,8 @@ public class SearchingServiceImpl implements SearchingService {
 		System.out.println("im going to convert");
 		ConvertedPostDto convertedPostDto = convertRequestDtoToConvertedPostDto(requestDto);
 		System.out.println(convertedPostDto.getId());
+		
+		//this is for editing
 		//PostSearchData postSearchData = searchingServiceRepository.findById(convertedPostDto.getId()).orElse(null);
 		//if(postSearchData!=null) {
 		//	if(convertedPostDto.getDistFeatures()!=null) {postSearchData.setDistFeatures(convertedPostDto.getDistFeatures());}
