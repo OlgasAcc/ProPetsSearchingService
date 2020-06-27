@@ -1,11 +1,13 @@
 package proPets.searching.service;
 
 import java.net.URI;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.ConvertedPostDto;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.RequestLocationDto;
+import proPets.searching.exceptions.PostNotFoundException;
 import proPets.searching.model.PostSearchData;
 
 @Service
@@ -34,20 +37,21 @@ public class SearchingServiceImpl implements SearchingService {
 	SearchingServiceRepository searchingServiceRepository;
 
 	@Override
-	public Iterable<String> findPostsByDistance(String address, String flag) {
-		RequestLocationDto requestLocationDto = getRequestLocationDtoByAddress(address); 
-		System.out.println("39: " + requestLocationDto);
+	public String[] findPostsByDistance(String address, String flag) {
+		RequestLocationDto requestLocationDto = getRequestLocationDtoByAddress(address);
+		System.out.println("42: " + requestLocationDto);
 		Set<PostSearchData> listPosts = searchingServiceRepository.findAllByDistance(
-				requestLocationDto.getLatitude(), requestLocationDto.getLongitude(),
+				requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1],
 				searchConfiguration.getDistanceGeneral());
 		if (listPosts.isEmpty()) {
-			return Collections.emptyList();
+			return new String[0];
 		} else {
-		String flagToSearch=flag.equalsIgnoreCase("lost")?"found":"lost";
-		return listPosts.stream()
+			String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
+			List<String> list=listPosts.stream()
 				.filter(p->p.getFlag().equalsIgnoreCase(flagToSearch))
 				.map(p->p.getId())
 				.collect(Collectors.toList());
+			return list.toArray(new String[0]);
 		}
 		
 	}
@@ -58,7 +62,7 @@ public class SearchingServiceImpl implements SearchingService {
 		String url = "http://localhost:8084/convert/v1/location"; //to Converter Service
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 				.queryParam("address",address);
-		RequestEntity<String> request = new RequestEntity<String>(HttpMethod.GET, builder.build().toUri());
+		RequestEntity<String> request = new RequestEntity<String>(HttpMethod.PUT, builder.build().toUri());
 		ResponseEntity<RequestLocationDto> response = restTemplate.exchange(request, RequestLocationDto.class);
 		return response.getBody();
 	}
@@ -67,26 +71,44 @@ public class SearchingServiceImpl implements SearchingService {
 	public void addPost(RequestDto requestDto) {
 		System.out.println("im going to convert");
 		ConvertedPostDto convertedPostDto = convertRequestDtoToConvertedPostDto(requestDto);
-		System.out.println(convertedPostDto.getId());
 		
-		//this is for editing
-		//PostSearchData postSearchData = searchingServiceRepository.findById(convertedPostDto.getId()).orElse(null);
-		//if(postSearchData!=null) {
-		//	if(convertedPostDto.getDistFeatures()!=null) {postSearchData.setDistFeatures(convertedPostDto.getDistFeatures());}
-		//	if(convertedPostDto.getLocation()!=null) {postSearchData.setLocation(convertedPostDto.getLocation());}
-		//	if(convertedPostDto.getPicturesTags()!=null) {postSearchData.setPicturesTags(convertedPostDto.getPicturesTags());}
-		//} else {
+		GeoPoint location = new GeoPoint(convertedPostDto.getLocation()[0], convertedPostDto.getLocation()[1]);
+		ArrayList<String> list = new ArrayList<String>();
+		for (int i = 0; i < convertedPostDto.getPicturesTags().length; i++) {
+			list.add(convertedPostDto.getPicturesTags()[i]);
+		}
 		PostSearchData postSearchData = PostSearchData.builder()
 					.id(convertedPostDto.getId())
 					.email(convertedPostDto.getEmail())
 					.flag(convertedPostDto.getFlag())
 					.type(convertedPostDto.getType())
 					.distFeatures(convertedPostDto.getDistFeatures())
-					.location(convertedPostDto.getLocation())
+					.picturesTags(list)
+					.location(location)
 					.build();
 		
 		searchingServiceRepository.save(postSearchData);
 		System.out.println("89: done!");
+	}
+	
+	@Override
+	public void editPost(RequestDto requestDto) throws PostNotFoundException {
+		System.out.println("im going to convert");
+		ConvertedPostDto convertedPostDto = convertRequestDtoToConvertedPostDto(requestDto);
+		
+		PostSearchData postSearchData = searchingServiceRepository.findById(convertedPostDto.getId())
+				.orElseThrow(() -> new PostNotFoundException());
+		GeoPoint location = new GeoPoint(convertedPostDto.getLocation()[0], convertedPostDto.getLocation()[1]);
+		ArrayList<String> tags = new ArrayList<String>();
+		for (int i = 0; i < convertedPostDto.getPicturesTags().length; i++) {
+			tags.add(convertedPostDto.getPicturesTags()[i]);
+		}	
+			if(convertedPostDto.getDistFeatures()!=null) {postSearchData.setDistFeatures(convertedPostDto.getDistFeatures());}
+			if(convertedPostDto.getLocation()!=null) {postSearchData.setLocation(location);}
+			if(convertedPostDto.getPicturesTags()!=null) {postSearchData.setPicturesTags(tags);}
+		
+		searchingServiceRepository.save(postSearchData);
+		System.out.println("122: done!");
 	}
 	
 	private ConvertedPostDto convertRequestDtoToConvertedPostDto(RequestDto requestDto) {
@@ -103,6 +125,33 @@ public class SearchingServiceImpl implements SearchingService {
 		} catch (HttpClientErrorException e) {
 			throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Converting post is failed");
 		}
+	}
+	
+	
+	
+	
+	
+	
+	
+
+	//test
+	@Override
+	public Iterable<PostSearchData> getAllFromDB() {
+		Iterable<PostSearchData> res = searchingServiceRepository.findAll();
+		return res;
+	}
+
+	//test
+	@Override
+	public PostSearchData getById(String id) {
+		PostSearchData post = searchingServiceRepository.findById(id).orElse(null);
+		return post;
+	}
+	
+	//test
+	@Override
+	public void cleanES() {
+		searchingServiceRepository.deleteAll();
 	}
 
 }

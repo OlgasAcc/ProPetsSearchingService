@@ -1,10 +1,11 @@
 package proPets.searching.model;
 
-import java.util.Set;
+import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -24,8 +25,10 @@ public class PostSearchData {
 	String email; //authorId
 	String flag;
 	String type;
+	//@Field(type = FieldType.Keyword)
 	String distFeatures;
-	Set<String> picturesTags;
+	//@Field(type = FieldType.Keyword)
+	ArrayList<String> picturesTags;
 	@GeoPointField
-	Double[] location;
+	GeoPoint location;
 }

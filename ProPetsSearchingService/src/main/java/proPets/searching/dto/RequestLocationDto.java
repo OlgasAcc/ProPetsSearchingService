@@ -1,13 +1,16 @@
 package proPets.searching.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class RequestLocationDto {
 
-	double latitude;
-	double longitude;
+	Double[] location;
 
 }
