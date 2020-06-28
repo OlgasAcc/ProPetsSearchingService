@@ -6,8 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.common.unit.DistanceUnit;
+import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -39,7 +46,19 @@ public class SearchingServiceImpl implements SearchingService {
 	@Override
 	public String[] findPostsByDistance(String address, String flag) {
 		RequestLocationDto requestLocationDto = getRequestLocationDtoByAddress(address);
-		System.out.println("42: " + requestLocationDto);
+		
+		GeoDistanceQueryBuilder filter = QueryBuilders.geoDistanceQuery("geoPoint")
+			        .point(requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1]).distance(searchConfiguration.getDistanceGeneral(), DistanceUnit.KILOMETERS);
+
+
+		 NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+				.withQuery(filter)
+				.withSort(SortBuilders.geoDistanceSort("geoPoint",
+						requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1]).order(SortOrder.ASC))
+				.build();
+		 
+		
+		
 		Set<PostSearchData> listPosts = searchingServiceRepository.findAllByDistance(
 				requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1],
 				searchConfiguration.getDistanceGeneral());
@@ -89,6 +108,31 @@ public class SearchingServiceImpl implements SearchingService {
 		
 		searchingServiceRepository.save(postSearchData);
 		System.out.println("89: done!");
+	}
+	
+	//test
+	@Override
+	public PostSearchData addPost1(RequestDto requestDto) {
+		System.out.println("im going to convert");
+		ConvertedPostDto convertedPostDto = convertRequestDtoToConvertedPostDto(requestDto);
+		
+		GeoPoint location = new GeoPoint(convertedPostDto.getLocation()[0], convertedPostDto.getLocation()[1]);
+		ArrayList<String> list = new ArrayList<String>();
+		for (int i = 0; i < convertedPostDto.getPicturesTags().length; i++) {
+			list.add(convertedPostDto.getPicturesTags()[i]);
+		}
+		PostSearchData postSearchData = PostSearchData.builder()
+					.id(convertedPostDto.getId())
+					.email(convertedPostDto.getEmail())
+					.flag(convertedPostDto.getFlag())
+					.type(convertedPostDto.getType())
+					.distFeatures(convertedPostDto.getDistFeatures())
+					.picturesTags(list)
+					.location(location)
+					.build();
+		
+		searchingServiceRepository.save(postSearchData);
+		return postSearchData;
 	}
 	
 	@Override

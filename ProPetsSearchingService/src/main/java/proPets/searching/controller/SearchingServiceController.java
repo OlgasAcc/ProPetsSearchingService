@@ -1,5 +1,8 @@
 package proPets.searching.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +43,20 @@ public class SearchingServiceController {
 		String[] arr = searchingService.findPostsByDistance(address, flag);
 		LocationResponseDto body = new LocationResponseDto(arr);
 		return ResponseEntity.ok().body(body);
+	}
+	
+	
+	//test
+	@GetMapping("/find")
+	public String[] getPostsByDist(@RequestParam("address") String address,
+			@RequestParam("flag") String flag) throws Exception {
+		return searchingService.findPostsByDistance(address, flag);
+	}
+	
+	//test
+	@PutMapping("/add")
+	public PostSearchData addPost1(@RequestBody RequestDto requestDto) throws Exception {
+		return searchingService.addPost1(requestDto);
 	}
 	
 	//test

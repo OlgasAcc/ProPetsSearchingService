@@ -20,6 +20,8 @@ public interface SearchingService {
 
 //test
 	void cleanES();
+//test
+	PostSearchData addPost1(RequestDto requestDto);
 
 
 }
