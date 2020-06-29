@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +26,7 @@ public class SearchingServiceController {
 	@Autowired
 	SearchingService searchingService;
 
-	@PutMapping("/post")
+	@PostMapping("/post")
 	public ResponseEntity<String> addPost(@RequestBody RequestDto requestDto) throws Exception {
 		HttpHeaders newHeaders = new HttpHeaders();
 		newHeaders.add("Content-Type", "application/json");
@@ -38,17 +37,33 @@ public class SearchingServiceController {
 	@GetMapping("/location")
 	public ResponseEntity<LocationResponseDto> getPostsByDistance(@RequestParam("address") String address,
 			@RequestParam("flag") String flag) throws Exception {
-		String[] arr = searchingService.findPostsByDistance(address, flag);
+		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
+		String[] arr = searchingService.searchPostsByDistance(address, flagToSearch); // для ручного поиска по локации: на странице клиент ищет посты в той же базе
 		LocationResponseDto body = new LocationResponseDto(arr);
 		return ResponseEntity.ok().body(body);
 	}
+	
+	@GetMapping("/all_matches")
+	public ResponseEntity<LocationResponseDto> getMatchingPosts(@RequestParam("post") String postId,
+			@RequestParam("flag") String flag) throws Exception {
+		String[] arr = searchingService.searchMatchingPosts(postId, flag); // для ручного поиска по локации: на странице клиент ищет посты в той же базе
+		LocationResponseDto body = new LocationResponseDto(arr);
+		//сделать линк-запрос, куда положить в боди список айди-постов, в хедер - одноразовый код. Код сохранить в бд (монго?)
+		// асинхронный запрос с линком в мейлинг-сервис
+		// когда юзер перейдет по линку - ЛФ по этому запросу проверяет код: делает запрос сюда. Если код есть - то удаляет из бд и возвращает ок.
+		// + ищет по этим айди посты и отрисовывает ленту
+		return ResponseEntity.ok().body(body);
+	}
+	
+	
+	
 	
 	
 	//test
 	@GetMapping("/find")
 	public String[] getPostsByDist(@RequestParam("address") String address,
 			@RequestParam("flag") String flag) throws Exception {
-		return searchingService.findPostsByDistance(address, flag);
+		return searchingService.searchPostsByDistance(address, flag);
 	}
 	
 	//test

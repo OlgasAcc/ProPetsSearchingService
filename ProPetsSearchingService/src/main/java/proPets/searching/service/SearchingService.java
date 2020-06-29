@@ -6,13 +6,19 @@ import proPets.searching.model.PostSearchData;
 
 public interface SearchingService {
 
-	String[] findPostsByDistance(String address, String flag);
+	String[] searchPostsByDistance(String address, String flag);
 
 	void addPost(RequestDto requestDto);
 	
 	void editPost(RequestDto requestDto) throws PostNotFoundException;
 
-	// test
+	String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException; 
+	
+	
+	
+	
+	
+// test
 	Iterable<PostSearchData> getAllFromDB();
 
 //test
@@ -20,8 +26,11 @@ public interface SearchingService {
 
 //test
 	void cleanES();
+	
 //test
 	PostSearchData addPost1(RequestDto requestDto);
+
+
 
 
 }
