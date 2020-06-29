@@ -10,6 +10,6 @@ import proPets.searching.model.PostSearchData;
 
 public interface SearchingServiceRepository extends ElasticsearchRepository<PostSearchData, String> {
 
-	@Query("{\"bool\" : {\"must\" : {\"match_all\" : {}},\"filter\" : {\"geo_distance\" : {\"distance\" : \"?2km\",\"pin.location\"\"lat\" : ?0,\"lon\" : -?1}}}}\"}")
-	Set<PostSearchData> findAllByDistance(double latitude, double longitude, double distance);
+	@Query("{\"bool\":{\"must\":{\"match_all\":{}},\"filter\":{\"geo_distance\":{\"distance\":\"200km\",\"location\":{\"lat\":?0,\"lon\":?1}}}}}")
+	Set<PostSearchData> findIdByDistance(double latitude, double longitude, double distance);
 }

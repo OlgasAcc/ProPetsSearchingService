@@ -50,16 +50,16 @@ public class SearchingServiceImpl implements SearchingService {
 		GeoDistanceQueryBuilder filter = QueryBuilders.geoDistanceQuery("geoPoint")
 			        .point(requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1]).distance(searchConfiguration.getDistanceGeneral(), DistanceUnit.KILOMETERS);
 
-
+//
 		 NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
 				.withQuery(filter)
 				.withSort(SortBuilders.geoDistanceSort("geoPoint",
 						requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1]).order(SortOrder.ASC))
 				.build();
 		 
+		//searchingServiceRepository.findAll()
 		
-		
-		Set<PostSearchData> listPosts = searchingServiceRepository.findAllByDistance(
+		Set<PostSearchData> listPosts = searchingServiceRepository.findIdByDistance(
 				requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1],
 				searchConfiguration.getDistanceGeneral());
 		if (listPosts.isEmpty()) {

@@ -29,9 +29,7 @@ public class PostSearchData {
 	String email; //authorId
 	String flag;
 	String type;
-	//@Field(type = FieldType.Keyword)
 	String distFeatures;
-	//@Field(type = FieldType.Keyword)
 	ArrayList<String> picturesTags;
 	@GeoPointField
 	GeoPoint location;
