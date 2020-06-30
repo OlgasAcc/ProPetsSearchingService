@@ -197,5 +197,24 @@ public class SearchingServiceImpl implements SearchingService {
 	}
 
 
+	@Override
+	public Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) {
+		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
+		String distFeatures = post.getDistFeatures();
+		//Iterable<PostSearchData>posts=searchingServiceRepository.findAll();
+		
+		return searchingServiceRepository.getStatsByFeatures(distFeatures);
+	}
+
+
+	@Override
+	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag) {
+		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
+		String distFeatures = post.getDistFeatures();
+		String type=post.getType();
+		return searchingServiceRepository.getStatsByTypeAndFeatures(type,distFeatures);
+	}
+
+
 }
 

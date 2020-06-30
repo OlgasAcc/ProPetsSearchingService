@@ -9,15 +9,11 @@ public interface SearchingService {
 	String[] searchPostsByDistance(String address, String flag);
 
 	void addPost(RequestDto requestDto);
-	
+
 	void editPost(RequestDto requestDto) throws PostNotFoundException;
 
-	String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException; 
-	
-	
-	
-	
-	
+	String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException;
+
 // test
 	Iterable<PostSearchData> getAllFromDB();
 
@@ -26,11 +22,14 @@ public interface SearchingService {
 
 //test
 	void cleanES();
-	
+
 //test
 	PostSearchData addPost1(RequestDto requestDto);
 
+// test
+	Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag);
 
-
+// test
+	Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag);
 
 }

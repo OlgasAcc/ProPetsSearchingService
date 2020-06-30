@@ -56,8 +56,19 @@ public class SearchingServiceController {
 	}
 	
 	
+	//test
+	@GetMapping("/stats/features")
+	public Iterable<PostSearchData> getIntersectionStatsByFeatures(@RequestParam("postId") String postId,
+			@RequestParam("flag") String flag) throws Exception {
+		return searchingService.getIntersectionStatsByFeatures(postId, flag);
+	}
 	
-	
+	//test
+	@GetMapping("/stats/type_features")
+	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(@RequestParam("postId") String postId,
+			@RequestParam("flag") String flag) throws Exception {
+		return searchingService.getIntersectionStatsByTypeAndFeatures(postId, flag);
+	}
 	
 	//test
 	@GetMapping("/find")
