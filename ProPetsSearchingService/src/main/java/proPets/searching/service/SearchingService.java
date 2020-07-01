@@ -14,6 +14,9 @@ public interface SearchingService {
 
 	String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException;
 
+//test	
+	Iterable<PostSearchData> getIntersectionStats(String postId, String flag);
+	
 // test
 	Iterable<PostSearchData> getAllFromDB();
 
@@ -31,5 +34,6 @@ public interface SearchingService {
 
 // test
 	Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag);
+
 
 }

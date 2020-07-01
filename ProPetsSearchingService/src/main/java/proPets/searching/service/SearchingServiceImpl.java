@@ -1,11 +1,13 @@
 package proPets.searching.service;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.client.ml.PostDataRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.http.HttpHeaders;
@@ -75,6 +77,7 @@ public class SearchingServiceImpl implements SearchingService {
 					.distFeatures(convertedPostDto.getDistFeatures())
 					.picturesTags(list)
 					.location(location)
+					//.dateOfPublish(LocalDateTime.now())
 					.build();
 		
 		searchingServiceRepository.save(postSearchData);
@@ -98,6 +101,7 @@ public class SearchingServiceImpl implements SearchingService {
 			if(convertedPostDto.getDistFeatures()!=null) {postSearchData.setDistFeatures(convertedPostDto.getDistFeatures());}
 			if(convertedPostDto.getLocation()!=null) {postSearchData.setLocation(location);}
 			if(convertedPostDto.getPicturesTags()!=null) {postSearchData.setPicturesTags(tags);}
+			//postSearchData.setDateOfPublish(LocalDateTime.now());
 		
 		searchingServiceRepository.save(postSearchData);
 		System.out.println("122: done!");
@@ -144,7 +148,14 @@ public class SearchingServiceImpl implements SearchingService {
 		}
 	}
 	
-	
+	@Override
+	public Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) {
+		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
+		String distFeatures = post.getDistFeatures();
+		//Iterable<PostSearchData>posts=searchingServiceRepository.findAll();
+		
+		return searchingServiceRepository.getStatsByFeatures(distFeatures);
+	}
 	
 	
 	
@@ -197,22 +208,35 @@ public class SearchingServiceImpl implements SearchingService {
 	}
 
 
-	@Override
-	public Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) {
-		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
-		String distFeatures = post.getDistFeatures();
-		//Iterable<PostSearchData>posts=searchingServiceRepository.findAll();
-		
-		return searchingServiceRepository.getStatsByFeatures(distFeatures);
-	}
-
-
+//test
 	@Override
 	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag) {
 		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
 		String distFeatures = post.getDistFeatures();
 		String type=post.getType();
 		return searchingServiceRepository.getStatsByTypeAndFeatures(type,distFeatures);
+	}
+
+	@Override
+	public Iterable<PostSearchData> getIntersectionStats(String postId, String flag) {
+		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
+		String distFeatures = post.getDistFeatures();
+		String type = post.getType();
+		double lat = post.getLocation().getLat();
+		double lon = post.getLocation().getLon();
+		double distance = searchConfiguration.getDistanceGeneral();
+		if (type.equalsIgnoreCase("cat")) {
+			distance = searchConfiguration.getDistanceCat();
+		}
+		if (type.equalsIgnoreCase("dog")) {
+			distance = searchConfiguration.getDistanceDog();
+		}
+		if (type.equalsIgnoreCase("parrot")) {
+			distance = searchConfiguration.getDistanceBird();
+		}
+		String picturesTags = post.getPicturesTags().toString();
+
+		return searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon, distance, picturesTags);
 	}
 
 

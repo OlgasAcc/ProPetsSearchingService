@@ -55,6 +55,12 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
+	//test
+	@GetMapping("/stats")
+	public Iterable<PostSearchData> getIntersectionStats(@RequestParam("postId") String postId,
+			@RequestParam("flag") String flag) throws Exception {
+		return searchingService.getIntersectionStats(postId, flag);
+	}
 	
 	//test
 	@GetMapping("/stats/features")
