@@ -13,7 +13,11 @@ public interface SearchingService {
 	void editPost(RequestDto requestDto) throws PostNotFoundException;
 
 	String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException;
+	
+	Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) throws PostNotFoundException;
 
+	
+	
 //test	
 	Iterable<PostSearchData> getIntersectionStats(String postId, String flag);
 	
@@ -28,9 +32,6 @@ public interface SearchingService {
 
 //test
 	PostSearchData addPost1(RequestDto requestDto);
-
-// test
-	Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag);
 
 // test
 	Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag);

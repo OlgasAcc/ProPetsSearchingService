@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.LocationResponseDto;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.model.PostSearchData;
@@ -25,6 +26,9 @@ public class SearchingServiceController {
 
 	@Autowired
 	SearchingService searchingService;
+	
+	@Autowired
+	SearchingServiceRepository searchingServiceRepository;
 
 	@PostMapping("/post")
 	public ResponseEntity<String> addPost(@RequestBody RequestDto requestDto) throws Exception {
@@ -43,17 +47,34 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
+	
+		
+	//его запустит ЛФ, когда юзер нажмет на ссылку в письме, чтобы отрисовать совпавшие посты на фронте
 	@GetMapping("/all_matches")
 	public ResponseEntity<LocationResponseDto> getMatchingPosts(@RequestParam("post") String postId,
 			@RequestParam("flag") String flag) throws Exception {
-		String[] arr = searchingService.searchMatchingPosts(postId, flag); // для ручного поиска по локации: на странице клиент ищет посты в той же базе
+		String[] arr = searchingService.searchMatchingPosts(postId, flag);
 		LocationResponseDto body = new LocationResponseDto(arr);
-		//сделать линк-запрос, куда положить в боди список айди-постов, в хедер - одноразовый код. Код сохранить в бд (монго?)
-		// асинхронный запрос с линком в мейлинг-сервис
-		// когда юзер перейдет по линку - ЛФ по этому запросу проверяет код: делает запрос сюда. Если код есть - то удаляет из бд и возвращает ок.
-		// + ищет по этим айди посты и отрисовывает ленту
 		return ResponseEntity.ok().body(body);
 	}
+	
+	//ЛФ вызывает асинхронно. Ищет список авторов. Шлет 1 запрос со списком авторов в боди в мэйлинг. Второй в мэйлинг - автор нового поста
+	@GetMapping("/notification")
+	public ResponseEntity<LocationResponseDto> getMatchingPostsAuthors(@RequestParam("post") String postId,
+			@RequestParam("flag") String flag) throws Exception {
+		String[] authorsEmails = searchingService.searchMatchingPostsAuthorsEmails(post, flag);
+		String newPostAuthorEmail=
+		LocationResponseDto body = new LocationResponseDto(arr);
+		return ResponseEntity.ok().body(body);
+	}
+	
+	
+	
+	
+	
+	
+//____________________________________________________________
+	
 	
 	//test
 	@GetMapping("/stats")

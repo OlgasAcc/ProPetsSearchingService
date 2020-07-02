@@ -3,6 +3,7 @@ package proPets.searching.service;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,27 +39,7 @@ public class SearchingServiceImpl implements SearchingService {
 	@Autowired
 	SearchingServiceRepository searchingServiceRepository;
 
-	@Override
-	public String[] searchPostsByDistance(String address, String flag) {
-		RequestLocationDto requestLocationDto = getRequestLocationDtoByAddress(address);
-		
-		Set<PostSearchData> listPosts = searchingServiceRepository.findIdByDistance(
-				requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1],
-				searchConfiguration.getDistanceGeneral());
-		if (listPosts.isEmpty()) {
-			return new String[0];
-		} else {
-			String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
-			List<String> list = listPosts.stream()
-					.filter(p -> p.getFlag().equalsIgnoreCase(flagToSearch))
-					.map(p -> p.getId())
-					.collect(Collectors.toList());
-			return list.toArray(new String[0]);
-		}
-		
-	}
 	
-
 	@Override
 	public void addPost(RequestDto requestDto) {
 		System.out.println("im going to convert");
@@ -85,7 +66,6 @@ public class SearchingServiceImpl implements SearchingService {
 		System.out.println("89: done!");
 	}
 	
-	
 	@Override
 	public void editPost(RequestDto requestDto) throws PostNotFoundException {
 		System.out.println("im going to convert");
@@ -108,13 +88,82 @@ public class SearchingServiceImpl implements SearchingService {
 	}
 	
 	
+	//user's manual searching in the current db by flag
+	@Override
+	public String[] searchPostsByDistance(String address, String flag) {
+		RequestLocationDto requestLocationDto = getRequestLocationDtoByAddress(address);
+		
+		Set<PostSearchData> listPosts = searchingServiceRepository.findIdByDistance(
+				requestLocationDto.getLocation()[0], requestLocationDto.getLocation()[1],
+				searchConfiguration.getDistanceGeneral());
+		if (listPosts.isEmpty()) {
+			return new String[0];
+		} else {
+			String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
+			List<String> list = listPosts.stream()
+					.filter(p -> p.getFlag().equalsIgnoreCase(flagToSearch))
+					.map(p -> p.getId())
+					.collect(Collectors.toList());
+			return list.toArray(new String[0]);
+		}		
+	}
+	
+	//user's manual searching in the current db by flag
+	@Override
+	public Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) throws PostNotFoundException {
+		PostSearchData post = searchingServiceRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+		String distFeatures = post.getDistFeatures();		
+		return searchingServiceRepository.getStatsByFeatures(distFeatures);
+	}
+	
+	
 	@Override
 	public String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException {
-		PostSearchData postSearchData = searchingServiceRepository.findById(postId)
+		PostSearchData post = searchingServiceRepository.findById(postId)
 				.orElseThrow(() -> new PostNotFoundException());
-		// написать алгоритм поиска по 4 параметрам
-		return null;
+		String distFeatures = post.getDistFeatures();
+		String type = post.getType();
+		double lat = post.getLocation().getLat();
+		double lon = post.getLocation().getLon();
+		double distance = searchConfiguration.getDistanceGeneral();
+		if (type.equalsIgnoreCase("cat")) {
+			distance = searchConfiguration.getDistanceCat();
+		}
+		if (type.equalsIgnoreCase("dog")) {
+			distance = searchConfiguration.getDistanceDog();
+		}
+		if (type.equalsIgnoreCase("parrot")) {
+			distance = searchConfiguration.getDistanceBird();
+		}
+		String picturesTags = post.getPicturesTags().toString();
+		Set<PostSearchData> matchedPosts = searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon,
+				distance, picturesTags);
+		Object[] temp = matchedPosts.stream().map(p -> p.getId()).toArray();
+		return Arrays.copyOf(temp, temp.length, String[].class);
+		
 	}
+		
+		@Override
+		public Iterable<PostSearchData> getIntersectionStats(String postId, String flag) {
+			PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
+			String distFeatures = post.getDistFeatures();
+			String type = post.getType();
+			double lat = post.getLocation().getLat();
+			double lon = post.getLocation().getLon();
+			double distance = searchConfiguration.getDistanceGeneral();
+			if (type.equalsIgnoreCase("cat")) {
+				distance = searchConfiguration.getDistanceCat();
+			}
+			if (type.equalsIgnoreCase("dog")) {
+				distance = searchConfiguration.getDistanceDog();
+			}
+			if (type.equalsIgnoreCase("parrot")) {
+				distance = searchConfiguration.getDistanceBird();
+			}
+			String picturesTags = post.getPicturesTags().toString();
+			return searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon, distance, picturesTags);
+		}
+
 	
 	
 	// UTILS!
@@ -146,15 +195,6 @@ public class SearchingServiceImpl implements SearchingService {
 		} catch (HttpClientErrorException e) {
 			throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Converting post is failed");
 		}
-	}
-	
-	@Override
-	public Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) {
-		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
-		String distFeatures = post.getDistFeatures();
-		//Iterable<PostSearchData>posts=searchingServiceRepository.findAll();
-		
-		return searchingServiceRepository.getStatsByFeatures(distFeatures);
 	}
 	
 	
@@ -217,27 +257,6 @@ public class SearchingServiceImpl implements SearchingService {
 		return searchingServiceRepository.getStatsByTypeAndFeatures(type,distFeatures);
 	}
 
-	@Override
-	public Iterable<PostSearchData> getIntersectionStats(String postId, String flag) {
-		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
-		String distFeatures = post.getDistFeatures();
-		String type = post.getType();
-		double lat = post.getLocation().getLat();
-		double lon = post.getLocation().getLon();
-		double distance = searchConfiguration.getDistanceGeneral();
-		if (type.equalsIgnoreCase("cat")) {
-			distance = searchConfiguration.getDistanceCat();
-		}
-		if (type.equalsIgnoreCase("dog")) {
-			distance = searchConfiguration.getDistanceDog();
-		}
-		if (type.equalsIgnoreCase("parrot")) {
-			distance = searchConfiguration.getDistanceBird();
-		}
-		String picturesTags = post.getPicturesTags().toString();
-
-		return searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon, distance, picturesTags);
-	}
 
 
 }
