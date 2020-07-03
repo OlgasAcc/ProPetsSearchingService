@@ -1,14 +1,11 @@
 package proPets.searching.model;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,6 +33,7 @@ public class PostSearchData {
 	ArrayList<String> picturesTags;
 	@GeoPointField
 	GeoPoint location;
+	
 	//@JsonFormat(pattern = "yyyy-MM-dd")
 	//LocalDateTime dateOfPublish;
 }

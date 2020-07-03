@@ -37,9 +37,17 @@ public class SearchingServiceController {
 		searchingService.addPost(requestDto);
 		return ResponseEntity.ok().build();
 	}
+	
+	@PostMapping("/post")
+	public ResponseEntity<String> editPost(@RequestBody RequestDto requestDto) throws Exception {
+		HttpHeaders newHeaders = new HttpHeaders();
+		newHeaders.add("Content-Type", "application/json");
+		searchingService.editPost(requestDto);
+		return ResponseEntity.ok().build();
+	}
 
 	@GetMapping("/location")
-	public ResponseEntity<LocationResponseDto> getPostsByDistance(@RequestParam("address") String address,
+	public ResponseEntity<LocationResponseDto> getMatchingPostsByDistance(@RequestParam("address") String address,
 			@RequestParam("flag") String flag) throws Exception {
 		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
 		String[] arr = searchingService.searchPostsByDistance(address, flagToSearch); // для ручного поиска по локации: на странице клиент ищет посты в той же базе
@@ -47,24 +55,28 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
-	
+	@GetMapping("/stats/features")
+	public String[] getMatchingPostsIdsByFeatures(@RequestParam("postId") String postId,
+			@RequestParam("flag") String flag) throws Exception {
+		return searchingService.searchPostsByMatchingFeatures(postId, flag);
+	}
 		
 	//его запустит ЛФ, когда юзер нажмет на ссылку в письме, чтобы отрисовать совпавшие посты на фронте
 	@GetMapping("/all_matches")
 	public ResponseEntity<LocationResponseDto> getMatchingPosts(@RequestParam("post") String postId,
 			@RequestParam("flag") String flag) throws Exception {
-		String[] arr = searchingService.searchMatchingPosts(postId, flag);
+		String[] arr = searchingService.getPostsIdsOfMatchingPosts(postId, flag);
 		LocationResponseDto body = new LocationResponseDto(arr);
 		return ResponseEntity.ok().body(body);
 	}
 	
 	//ЛФ вызывает асинхронно. Ищет список авторов. Шлет 1 запрос со списком авторов в боди в мэйлинг. Второй в мэйлинг - автор нового поста
+	// для теста - вызвать отсюда и проверить с email service
 	@GetMapping("/notification")
 	public ResponseEntity<LocationResponseDto> getMatchingPostsAuthors(@RequestParam("post") String postId,
 			@RequestParam("flag") String flag) throws Exception {
-		String[] authorsEmails = searchingService.searchMatchingPostsAuthorsEmails(post, flag);
-		String newPostAuthorEmail=
-		LocationResponseDto body = new LocationResponseDto(arr);
+		String[] authorsEmails = searchingService.getAuthorsOfMatchingPosts(postId, flag);
+		LocationResponseDto body = new LocationResponseDto(authorsEmails);
 		return ResponseEntity.ok().body(body);
 	}
 	
@@ -81,13 +93,6 @@ public class SearchingServiceController {
 	public Iterable<PostSearchData> getIntersectionStats(@RequestParam("postId") String postId,
 			@RequestParam("flag") String flag) throws Exception {
 		return searchingService.getIntersectionStats(postId, flag);
-	}
-	
-	//test
-	@GetMapping("/stats/features")
-	public Iterable<PostSearchData> getIntersectionStatsByFeatures(@RequestParam("postId") String postId,
-			@RequestParam("flag") String flag) throws Exception {
-		return searchingService.getIntersectionStatsByFeatures(postId, flag);
 	}
 	
 	//test

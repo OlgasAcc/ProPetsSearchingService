@@ -6,16 +6,24 @@ import proPets.searching.model.PostSearchData;
 
 public interface SearchingService {
 
-	String[] searchPostsByDistance(String address, String flag);
-
 	void addPost(RequestDto requestDto);
 
 	void editPost(RequestDto requestDto) throws PostNotFoundException;
-
-	String[] searchMatchingPosts(String postId, String flag) throws PostNotFoundException;
 	
-	Iterable<PostSearchData> getIntersectionStatsByFeatures(String postId, String flag) throws PostNotFoundException;
+	String[] searchPostsByDistance(String address, String flag);
+	
+	String[] searchPostsByMatchingFeatures(String postId, String flag) throws PostNotFoundException;
+	
+	String[] getAuthorsOfMatchingPosts(String postId, String flag) throws PostNotFoundException;
 
+	String[] getPostsIdsOfMatchingPosts(String postId, String flag) throws PostNotFoundException;
+	
+	
+	
+	
+	
+	
+	
 	
 	
 //test	
@@ -35,6 +43,7 @@ public interface SearchingService {
 
 // test
 	Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag);
+
 
 
 }
