@@ -2,6 +2,8 @@ package proPets.searching.service;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -58,7 +60,6 @@ public class SearchingServiceImpl implements SearchingService {
 					.build();
 		
 		searchingServiceRepository.save(postSearchData);		
-		//System.out.println("61: done!");
 	}
 	
 	@Override
@@ -121,6 +122,19 @@ public class SearchingServiceImpl implements SearchingService {
 				.map(p -> p.getEmail())
 				.collect(Collectors.toList())
 				.toArray(new String[0]);
+	}
+	
+	// for cleaning the tail of posts of removed author
+	@Override
+	public void removePostsByAuthor(String authorId) {
+		Iterable<PostSearchData> it = searchingServiceRepository.findAll();	
+		Set<PostSearchData> set = new HashSet<PostSearchData>((Collection<PostSearchData>)it);
+		List<PostSearchData> list = set.stream()
+				.filter(p->(p.getEmail().equalsIgnoreCase(authorId)))
+				.collect(Collectors.toList());
+		for (PostSearchData postSearchData : list) {
+			searchingServiceRepository.delete(postSearchData);
+		}
 	}
 	
 	
@@ -262,6 +276,7 @@ public class SearchingServiceImpl implements SearchingService {
 		String picturesTags = post.getPicturesTags().toString();
 		return searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon, distance, picturesTags);
 	}
+
 
 }
 

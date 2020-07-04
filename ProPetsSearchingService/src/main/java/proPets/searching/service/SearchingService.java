@@ -17,7 +17,8 @@ public interface SearchingService {
 	String[] getAuthorsOfMatchingPosts(String postId, String flag) throws PostNotFoundException;
 
 	String[] getPostsIdsOfMatchingPosts(String postId, String flag) throws PostNotFoundException;
-	
+
+	void removePostsByAuthor(String authorId);
 	
 	
 	

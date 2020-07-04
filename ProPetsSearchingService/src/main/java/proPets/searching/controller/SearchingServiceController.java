@@ -65,7 +65,7 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
-	//ЛФ вызывает асинхронно. Ищет список авторов. Шлет 1 запрос со списком авторов в боди в мэйлинг. Второй в мэйлинг - автор нового поста
+	//ЛФ вызывает асинхронно. Ищет список авторов. Шлет 1 запрос со списком авторов в боди в мэйлинг. Второй в мэйлинг - автору нового поста
 	// для теста - вызвать отсюда и проверить с email service
 	@GetMapping("/notification")
 	public ResponseEntity<LocationResponseDto> getMatchingPostsAuthors(@RequestParam("post") String postId,
@@ -75,7 +75,12 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
-	
+	// called by LF for removing all the "tail" by removed author in ES db
+	@DeleteMapping("/cleaner")
+	public ResponseEntity<String> removePostsByAuthor(@RequestParam ("authorId") String authorId) throws Exception {		
+		searchingService.removePostsByAuthor(authorId);
+		return ResponseEntity.ok().build();
+	}
 	
 	
 	
