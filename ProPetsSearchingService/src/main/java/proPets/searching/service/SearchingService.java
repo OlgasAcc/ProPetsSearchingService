@@ -6,9 +6,9 @@ import proPets.searching.model.PostSearchData;
 
 public interface SearchingService {
 
-	void addPost(RequestDto requestDto);
-
-	void editPost(RequestDto requestDto) throws PostNotFoundException;
+	void addOrEditPost(RequestDto requestDto) throws PostNotFoundException;
+	
+	void removePost(String postId) throws PostNotFoundException;
 	
 	String[] searchPostsByDistance(String address, String flag);
 	

@@ -38,7 +38,7 @@ public class SearchingServiceImpl implements SearchingService {
 
 	
 	@Override
-	public void addPost(RequestDto requestDto) {
+	public void addOrEditPost(RequestDto requestDto) throws PostNotFoundException{
 		System.out.println("im going to convert");
 		ConvertedPostDto convertedPostDto = convertRequestDtoToConvertedPostDto(requestDto);
 		
@@ -48,7 +48,7 @@ public class SearchingServiceImpl implements SearchingService {
 			list.add(convertedPostDto.getPicturesTags()[i]);
 		}
 		PostSearchData postSearchData = PostSearchData.builder()
-					.id(convertedPostDto.getId())
+					.id(convertedPostDto.getId()) // если пост есть в бд - перезапишет по айди
 					.email(convertedPostDto.getEmail())
 					.flag(convertedPostDto.getFlag())
 					.type(convertedPostDto.getType())
@@ -58,29 +58,15 @@ public class SearchingServiceImpl implements SearchingService {
 					.build();
 		
 		searchingServiceRepository.save(postSearchData);		
-		System.out.println("89: done!");
+		//System.out.println("61: done!");
 	}
 	
 	@Override
-	public void editPost(RequestDto requestDto) throws PostNotFoundException {
-		System.out.println("im going to convert");
-		ConvertedPostDto convertedPostDto = convertRequestDtoToConvertedPostDto(requestDto);
-		
-		PostSearchData postSearchData = searchingServiceRepository.findById(convertedPostDto.getId())
-				.orElseThrow(() -> new PostNotFoundException());
-		GeoPoint location = new GeoPoint(convertedPostDto.getLocation()[0], convertedPostDto.getLocation()[1]);
-		ArrayList<String> tags = new ArrayList<String>();
-		for (int i = 0; i < convertedPostDto.getPicturesTags().length; i++) {
-			tags.add(convertedPostDto.getPicturesTags()[i]);
-		}	
-			if(convertedPostDto.getDistFeatures()!=null) {postSearchData.setDistFeatures(convertedPostDto.getDistFeatures());}
-			if(convertedPostDto.getLocation()!=null) {postSearchData.setLocation(location);}
-			if(convertedPostDto.getPicturesTags()!=null) {postSearchData.setPicturesTags(tags);}
-		
-		searchingServiceRepository.save(postSearchData);
-		System.out.println("122: done!");
+	public void removePost(String postId) throws PostNotFoundException {
+		PostSearchData postSearchData = searchingServiceRepository.findById(postId).orElseThrow(()-> new PostNotFoundException());
+		searchingServiceRepository.delete(postSearchData);
 	}
-	
+
 	
 	//user's manual searching in the current db by flag
 	@Override
@@ -116,17 +102,6 @@ public class SearchingServiceImpl implements SearchingService {
 	}
 	
 	@Override
-	public String[] getAuthorsOfMatchingPosts(String postId, String flag) throws PostNotFoundException {
-		Set<PostSearchData> set = searchMatchingPosts(postId);
-		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
-		return set.stream()
-				.filter(p -> p.getFlag().equalsIgnoreCase(flagToSearch))
-				.map(p -> p.getEmail())
-				.collect(Collectors.toList())
-				.toArray(new String[0]);
-	}
-	
-	@Override
 	public String[] getPostsIdsOfMatchingPosts(String postId, String flag) throws PostNotFoundException { 
 		Set<PostSearchData> set = searchMatchingPosts(postId);
 		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
@@ -135,6 +110,17 @@ public class SearchingServiceImpl implements SearchingService {
 				.map(p -> p.getId())
 				.collect(Collectors.toList())
 				.toArray(new String[0]);	
+	}
+	
+	@Override
+	public String[] getAuthorsOfMatchingPosts(String postId, String flag) throws PostNotFoundException {
+		Set<PostSearchData> set = searchMatchingPosts(postId);
+		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
+		return set.stream()
+				.filter(p -> p.getFlag().equalsIgnoreCase(flagToSearch))
+				.map(p -> p.getEmail())
+				.collect(Collectors.toList())
+				.toArray(new String[0]);
 	}
 	
 	

@@ -1,7 +1,6 @@
 package proPets.searching.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,18 +30,14 @@ public class SearchingServiceController {
 	SearchingServiceRepository searchingServiceRepository;
 
 	@PostMapping("/post")
-	public ResponseEntity<String> addPost(@RequestBody RequestDto requestDto) throws Exception {
-		HttpHeaders newHeaders = new HttpHeaders();
-		newHeaders.add("Content-Type", "application/json");
-		searchingService.addPost(requestDto);
+	public ResponseEntity<String> addOrEditPost(@RequestBody RequestDto requestDto) throws Exception {
+		searchingService.addOrEditPost(requestDto);
 		return ResponseEntity.ok().build();
 	}
 	
-	@PostMapping("/post")
-	public ResponseEntity<String> editPost(@RequestBody RequestDto requestDto) throws Exception {
-		HttpHeaders newHeaders = new HttpHeaders();
-		newHeaders.add("Content-Type", "application/json");
-		searchingService.editPost(requestDto);
+	@DeleteMapping("/post")
+	public ResponseEntity<String> removePost(@RequestParam ("postId") String postId) throws Exception {
+		searchingService.removePost(postId);
 		return ResponseEntity.ok().build();
 	}
 
