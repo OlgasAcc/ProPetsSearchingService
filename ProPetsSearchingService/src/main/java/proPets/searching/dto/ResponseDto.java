@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class LocationResponseDto {
+public class ResponseDto {
 	String[] postIds;
 }
