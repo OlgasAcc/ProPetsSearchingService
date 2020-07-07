@@ -26,6 +26,7 @@ import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.ConvertedPostDto;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.RequestLocationDto;
+import proPets.searching.dto.UserRemoveDto;
 import proPets.searching.exceptions.PostNotFoundException;
 import proPets.searching.model.PostSearchData;
 
@@ -126,7 +127,8 @@ public class SearchingServiceImpl implements SearchingService {
 	
 	// for cleaning the tail of posts of removed author
 	@Override
-	public void removePostsByAuthor(String authorId) {
+	public String removePostsByAuthor(UserRemoveDto userRemoveDto) {
+		String authorId = userRemoveDto.getUserId();
 		Iterable<PostSearchData> it = searchingServiceRepository.findAll();	
 		Set<PostSearchData> set = new HashSet<PostSearchData>((Collection<PostSearchData>)it);
 		List<PostSearchData> list = set.stream()
@@ -135,6 +137,7 @@ public class SearchingServiceImpl implements SearchingService {
 		for (PostSearchData postSearchData : list) {
 			searchingServiceRepository.delete(postSearchData);
 		}
+		return authorId;
 	}
 	
 	

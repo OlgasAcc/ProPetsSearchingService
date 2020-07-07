@@ -1,6 +1,7 @@
 package proPets.searching.service;
 
 import proPets.searching.dto.RequestDto;
+import proPets.searching.dto.UserRemoveDto;
 import proPets.searching.exceptions.PostNotFoundException;
 import proPets.searching.model.PostSearchData;
 
@@ -18,7 +19,7 @@ public interface SearchingService {
 
 	String[] getPostsIdsOfMatchingPosts(String postId, String flag) throws PostNotFoundException;
 
-	void removePostsByAuthor(String authorId);
+	String removePostsByAuthor(UserRemoveDto userRemoveDto);
 	
 	
 	

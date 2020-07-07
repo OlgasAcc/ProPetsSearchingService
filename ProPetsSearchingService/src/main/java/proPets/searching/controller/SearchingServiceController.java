@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import proPets.searching.dao.SearchingServiceRepository;
-import proPets.searching.dto.ResponseDto;
 import proPets.searching.dto.RequestDto;
+import proPets.searching.dto.ResponseDto;
+import proPets.searching.dto.UserRemoveDto;
 import proPets.searching.model.PostSearchData;
 import proPets.searching.service.SearchingService;
 
@@ -75,11 +76,10 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
-	// called by LF for removing all the "tail" by removed author in ES db
+	// called by Accounting Service for removing all the "tail" by removed author in ES db
 	@DeleteMapping("/cleaner")
-	public ResponseEntity<String> removePostsByAuthor(@RequestParam ("authorId") String authorId) throws Exception {		
-		searchingService.removePostsByAuthor(authorId);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<String> cleanPostsByAuthor(@RequestBody UserRemoveDto userRemoveDto) throws Exception {		
+		return ResponseEntity.ok(searchingService.removePostsByAuthor(userRemoveDto));
 	}
 	
 	
