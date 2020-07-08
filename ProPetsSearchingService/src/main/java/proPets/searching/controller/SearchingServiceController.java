@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +14,6 @@ import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.ResponseDto;
 import proPets.searching.dto.UserRemoveDto;
-import proPets.searching.model.PostSearchData;
 import proPets.searching.service.SearchingService;
 
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -88,48 +86,48 @@ public class SearchingServiceController {
 //____________________________________________________________
 	
 	
-	//test
-	@GetMapping("/stats")
-	public Iterable<PostSearchData> getIntersectionStats(@RequestParam("postId") String postId,
-			@RequestParam("flag") String flag) throws Exception {
-		return searchingService.getIntersectionStats(postId, flag);
-	}
-	
-	//test
-	@GetMapping("/stats/type_features")
-	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(@RequestParam("postId") String postId,
-			@RequestParam("flag") String flag) throws Exception {
-		return searchingService.getIntersectionStatsByTypeAndFeatures(postId, flag);
-	}
-	
-	//test
-	@GetMapping("/find")
-	public String[] getPostsByDist(@RequestParam("address") String address,
-			@RequestParam("flag") String flag) throws Exception {
-		return searchingService.searchPostsByDistance(address, flag);
-	}
-	
-	//test
-	@PostMapping("/add")
-	public PostSearchData addPost1(@RequestBody RequestDto requestDto) throws Exception {
-		return searchingService.addPost1(requestDto);
-	}
-	
-	//test
-	@GetMapping("/getAll")
-	public Iterable<PostSearchData>getAllFromDB(){
-		return searchingService.getAllFromDB();
-	}
-	
-	//test
-	@GetMapping("/get/{id}")
-	public PostSearchData getById(@PathVariable String id){
-		return searchingService.getById(id);
-	}
-	
-	//test
-	@DeleteMapping("/clean")
-	public void cleanES(){
-		searchingService.cleanES();
-	}
+//	//test
+//	@GetMapping("/stats")
+//	public Iterable<PostSearchData> getIntersectionStats(@RequestParam("postId") String postId,
+//			@RequestParam("flag") String flag) throws Exception {
+//		return searchingService.getIntersectionStats(postId, flag);
+//	}
+//	
+//	//test
+//	@GetMapping("/stats/type_features")
+//	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(@RequestParam("postId") String postId,
+//			@RequestParam("flag") String flag) throws Exception {
+//		return searchingService.getIntersectionStatsByTypeAndFeatures(postId, flag);
+//	}
+//	
+//	//test
+//	@GetMapping("/find")
+//	public String[] getPostsByDist(@RequestParam("address") String address,
+//			@RequestParam("flag") String flag) throws Exception {
+//		return searchingService.searchPostsByDistance(address, flag);
+//	}
+//	
+//	//test
+//	@PostMapping("/add")
+//	public PostSearchData addPost1(@RequestBody RequestDto requestDto) throws Exception {
+//		return searchingService.addPost1(requestDto);
+//	}
+//	
+//	//test
+//	@GetMapping("/getAll")
+//	public Iterable<PostSearchData>getAllFromDB(){
+//		return searchingService.getAllFromDB();
+//	}
+//	
+//	//test
+//	@GetMapping("/get/{id}")
+//	public PostSearchData getById(@PathVariable String id){
+//		return searchingService.getById(id);
+//	}
+//	
+//	//test
+//	@DeleteMapping("/clean")
+//	public void cleanES(){
+//		searchingService.cleanES();
+//	}
 }

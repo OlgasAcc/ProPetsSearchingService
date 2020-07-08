@@ -3,7 +3,6 @@ package proPets.searching.service;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.UserRemoveDto;
 import proPets.searching.exceptions.PostNotFoundException;
-import proPets.searching.model.PostSearchData;
 
 public interface SearchingService {
 
@@ -23,28 +22,6 @@ public interface SearchingService {
 	
 	
 	
-	
-	
-	
-	
-	
-//test	
-	Iterable<PostSearchData> getIntersectionStats(String postId, String flag);
-	
-// test
-	Iterable<PostSearchData> getAllFromDB();
-
-//test
-	PostSearchData getById(String id);
-
-//test
-	void cleanES();
-
-//test
-	PostSearchData addPost1(RequestDto requestDto);
-
-// test
-	Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag);
 
 
 
