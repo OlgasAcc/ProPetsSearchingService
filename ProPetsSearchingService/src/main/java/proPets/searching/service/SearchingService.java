@@ -20,6 +20,7 @@ public interface SearchingService {
 
 	String removePostsByAuthor(UserRemoveDto userRemoveDto);
 	
+	void unsubscribeFromEmailNotification (String authorId);
 	
 	
 

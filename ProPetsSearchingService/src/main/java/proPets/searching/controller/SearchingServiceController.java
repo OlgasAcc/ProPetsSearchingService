@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,8 +66,7 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
-	//??ЛФ вызывает асинхронно. Ищет список авторов. Шлет 1 запрос со списком авторов в боди в мэйлинг. Второй в мэйлинг - автору нового поста
-	// для теста - вызвать отсюда и проверить с email service
+	// для теста: ручной вызов вместо Кафки
 	@GetMapping("/notification")
 	public ResponseEntity<ResponseDto> getMatchingPostsAuthors(@RequestParam("post") String postId,
 			@RequestParam("flag") String flag) throws Exception {
@@ -78,6 +79,12 @@ public class SearchingServiceController {
 	@DeleteMapping("/cleaner")
 	public ResponseEntity<String> cleanPostsByAuthor(@RequestBody UserRemoveDto userRemoveDto) throws Exception {		
 		return ResponseEntity.ok(searchingService.removePostsByAuthor(userRemoveDto));
+	}
+	
+	@PutMapping("/unsubscribe/{authorId}")
+	public ResponseEntity<String> unsubcribeFromNotifications(@PathVariable String authorId) throws Exception {		
+		searchingService.unsubscribeFromEmailNotification(authorId);
+		return ResponseEntity.ok(authorId);
 	}
 	
 	

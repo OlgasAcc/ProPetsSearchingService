@@ -32,6 +32,9 @@ public class SearchingServiceImpl implements SearchingService {
 	@Autowired
 	SearchUtil searchUtil;
 	
+	@Autowired
+	SearchingDataExchangeService dataExchangeService;
+	
 	@Override
 	public void addOrEditPost(RequestDto requestDto) throws PostNotFoundException{
 		System.out.println("im going to convert");
@@ -50,6 +53,7 @@ public class SearchingServiceImpl implements SearchingService {
 					.distFeatures(convertedPostDto.getDistFeatures())
 					.picturesTags(list)
 					.location(location)
+					//.IsAuthorSubscribed(true)
 					.build();
 		
 		searchingServiceRepository.save(postSearchData);		
@@ -112,6 +116,7 @@ public class SearchingServiceImpl implements SearchingService {
 		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
 		return set.stream()
 				.filter(p -> p.getFlag().equalsIgnoreCase(flagToSearch))
+				//.filter(p -> p.getIsAuthorSubscribed().equalsIgnoreCase(flagToSearch))
 				.map(p -> p.getEmail())
 				.collect(Collectors.toList())
 				.toArray(new String[0]);
@@ -131,11 +136,12 @@ public class SearchingServiceImpl implements SearchingService {
 		return authorId;
 	}
 	
-	
-	
-	
-	
-	
+	@Override
+	public void unsubscribeFromEmailNotification(String authorId) {
+		// TODO найти все посты по автору, в стриме поменять им поле IsAuthorSubscribed на false
+		
+	}
+
 	
 	
 	//Tests
@@ -183,8 +189,7 @@ public class SearchingServiceImpl implements SearchingService {
 		return postSearchData;
 	}
 
-
-//test
+	//test
 	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(String postId, String flag) {
 		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
 		String distFeatures = post.getDistFeatures();
@@ -192,8 +197,7 @@ public class SearchingServiceImpl implements SearchingService {
 		return searchingServiceRepository.getStatsByTypeAndFeatures(type,distFeatures);
 	}
 
-//test
-
+	//test
 	public Iterable<PostSearchData> getIntersectionStats(String postId, String flag) {
 		PostSearchData post = searchingServiceRepository.findById(postId).orElse(null);
 		String distFeatures = post.getDistFeatures();
@@ -213,6 +217,8 @@ public class SearchingServiceImpl implements SearchingService {
 		String picturesTags = post.getPicturesTags().toString();
 		return searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon, distance, picturesTags);
 	}
+
+
 
 
 }

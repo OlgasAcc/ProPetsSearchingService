@@ -33,6 +33,8 @@ public class PostSearchData {
 	ArrayList<String> picturesTags;
 	@GeoPointField
 	GeoPoint location;
+	//to add after all tests and cleaning DB:
+	//Boolean IsAuthorSubscribed;
 	
 	//@JsonFormat(pattern = "yyyy-MM-dd")
 	//LocalDateTime dateOfPublish;
