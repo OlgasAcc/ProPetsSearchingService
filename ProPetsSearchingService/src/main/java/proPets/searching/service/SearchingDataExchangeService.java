@@ -11,7 +11,6 @@ import org.springframework.util.MimeTypeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import lombok.extern.slf4j.Slf4j;
 import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.EmailMatchedPostsAuthorsDto;
 import proPets.searching.dto.EmailNewPostAuthorDto;
@@ -21,7 +20,7 @@ import proPets.searching.exceptions.PostNotFoundException;
 import proPets.searching.model.PostSearchData;
 
 @Service
-@Slf4j
+//@Slf4j
 public class SearchingDataExchangeService {
 	
 	@Autowired
@@ -35,9 +34,6 @@ public class SearchingDataExchangeService {
 
 	@StreamListener(DataExchange.INPUT)
 	public void handlePostData(@Payload PostMQDto postMQDto) throws JsonMappingException, JsonProcessingException, PostNotFoundException, EmptyDataDtoException {
-		//System.out.println(postMQDto.getPostId());
-		log.info("Received postMQDto: {}", postMQDto);
-		System.out.println(postMQDto);
 		if (postMQDto != null) {
 			PostSearchData postSearchData = searchingServiceRepository.findById(postMQDto.getPostId()).orElse(null);
 			if (postSearchData != null) {
@@ -48,15 +44,11 @@ public class SearchingDataExchangeService {
 				EmailNewPostAuthorDto newPostAuthorDto = new EmailNewPostAuthorDto(postId, flag, authorId);
 				dataExchange.toNewPostAuthor().send(MessageBuilder.withPayload(newPostAuthorDto)
 						.setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON).build());
-				log.info("Sending newPostAuthorDto {}", newPostAuthorDto);
-				System.out.println(newPostAuthorDto);
 
 				EmailMatchedPostsAuthorsDto matchedPostsAuthorsDto = new EmailMatchedPostsAuthorsDto(postId, flag,
 						searchingService.getAuthorsOfMatchingPosts(postId, flag));
 				dataExchange.toAllMatchedPostsAuthors().send(MessageBuilder.withPayload(matchedPostsAuthorsDto)
 						.setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON).build());
-				log.info("Sending matchedPostsAuthorsDto {}", matchedPostsAuthorsDto);
-				System.out.println(matchedPostsAuthorsDto);
 			} else
 				throw new PostNotFoundException();
 		} else
