@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import proPets.searching.model.PostSearchData;
 
 @Configuration
-@ManagedResource
+@RefreshScope
 public class SearchingConfiguration {
 
 	Map<String, PostSearchData> posts = new ConcurrentHashMap<>();
@@ -32,6 +32,7 @@ public class SearchingConfiguration {
 	@Value("${distance.dog}")
 	double distanceDog;
 	
+	@RefreshScope
 	public double getDistanceDog() {
 		return distanceDog;
 	}
@@ -39,6 +40,7 @@ public class SearchingConfiguration {
 	@Value("${distance.cat}")
 	double distanceCat;
 	
+	@RefreshScope
 	public double getDistanceCat() {
 		return distanceCat;
 	}
@@ -46,6 +48,7 @@ public class SearchingConfiguration {
 	@Value("${distance.bird}")
 	double distanceBird;
 	
+	@RefreshScope
 	public double getDistanceBird() {
 		return distanceBird;
 	}
@@ -53,7 +56,16 @@ public class SearchingConfiguration {
 	@Value("${distance.general}")
 	double distanceGeneral;
 	
+	@RefreshScope
 	public double getDistanceGeneral() {
 		return distanceGeneral;
+	}
+	
+	@Value("${base.convert.url}")
+	String baseConvertUrl;
+	
+	@RefreshScope
+	public String getBaseConvertUrl() {
+		return baseConvertUrl;
 	}
 }

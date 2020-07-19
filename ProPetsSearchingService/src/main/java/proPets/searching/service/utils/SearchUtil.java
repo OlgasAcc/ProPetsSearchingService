@@ -56,8 +56,7 @@ public class SearchUtil implements Serializable {
 	
 	public RequestLocationDto getRequestLocationDtoByAddress(String address) {
 		RestTemplate restTemplate = searchConfiguration.restTemplate();
-		//String url = "https://propets-.../convert/v1/location";
-		String url = "http://localhost:8084/convert/v1/location"; //to Converter Service
+		String url = searchConfiguration.getBaseConvertUrl(); 
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
 				.queryParam("address",address);
 		RequestEntity<String> request = new RequestEntity<String>(HttpMethod.PUT, builder.build().toUri());
@@ -67,8 +66,7 @@ public class SearchUtil implements Serializable {
 	
 	public ConvertedPostDto convertRequestDtoToConvertedPostDto(RequestDto requestDto) {
 		RestTemplate restTemplate = searchConfiguration.restTemplate();
-		// String url = "https://propets-.../convert/v1/post";
-		String url = "http://localhost:8084/convert/v1/post"; // to Converter service
+		String url = searchConfiguration.getBaseConvertUrl();
 		try {
 			HttpHeaders newHeaders = new HttpHeaders();
 			newHeaders.add("Content-Type", "application/json");

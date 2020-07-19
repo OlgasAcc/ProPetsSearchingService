@@ -1,6 +1,7 @@
 package proPets.searching.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import proPets.searching.configuration.BeanConfiguration;
+import proPets.searching.configuration.SearchingConfiguration;
 import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.ResponseDto;
@@ -30,6 +33,15 @@ public class SearchingServiceController {
 	@Autowired
 	SearchingServiceRepository searchingServiceRepository;
 
+	@Autowired
+	SearchingConfiguration searchingConfiguration;
+
+	@RefreshScope
+	@GetMapping("/config")
+	public  BeanConfiguration getRefreshedData() {
+		return new BeanConfiguration(searchingConfiguration.getDistanceBird(), searchingConfiguration.getDistanceCat(),searchingConfiguration.getDistanceDog(),searchingConfiguration.getDistanceGeneral(),searchingConfiguration.getBaseConvertUrl());
+	}
+	
 	@PostMapping("/post")
 	public ResponseEntity<String> addOrEditPost(@RequestBody RequestDto requestDto) throws Exception {
 		searchingService.addOrEditPost(requestDto);
