@@ -46,14 +46,14 @@ public class SearchingServiceImpl implements SearchingService {
 			list.add(convertedPostDto.getPicturesTags()[i]);
 		}
 		PostSearchData postSearchData = PostSearchData.builder()
-					.id(convertedPostDto.getId()) // если пост есть в бд - перезапишет по айди
+					.id(convertedPostDto.getId()) // если пост есть в бд - перезапишет по id
 					.email(convertedPostDto.getEmail())
 					.flag(convertedPostDto.getFlag())
 					.type(convertedPostDto.getType())
 					.distFeatures(convertedPostDto.getDistFeatures())
 					.picturesTags(list)
 					.location(location)
-					//.IsAuthorSubscribed(true)
+					//TODO: .IsAuthorSubscribed(true)
 					.build();
 		
 		searchingServiceRepository.save(postSearchData);		
@@ -217,9 +217,5 @@ public class SearchingServiceImpl implements SearchingService {
 		String picturesTags = post.getPicturesTags().toString();
 		return searchingServiceRepository.getIntersectedPosts(type, distFeatures, lat, lon, distance, picturesTags);
 	}
-
-
-
-
 }
 

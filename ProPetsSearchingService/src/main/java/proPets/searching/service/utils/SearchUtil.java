@@ -49,24 +49,21 @@ public class SearchUtil implements Serializable {
 		if (type.equalsIgnoreCase("parrot")) {
 			distance = searchConfiguration.getDistanceBird();
 		}
-		return searchingServiceRepository.getIntersectedPosts(type, post.getDistFeatures(), post.getLocation().getLat(), post.getLocation().getLon(),
-				distance, post.getPicturesTags().toString());
+		return searchingServiceRepository.getIntersectedPosts(type, post.getDistFeatures(), post.getLocation().getLat(), post.getLocation().getLon(), distance, post.getPicturesTags().toString());
 	}
-	
-	
+
 	public RequestLocationDto getRequestLocationDtoByAddress(String address) {
 		RestTemplate restTemplate = searchConfiguration.restTemplate();
-		String url = searchConfiguration.getBaseConvertUrl(); 
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
-				.queryParam("address",address);
+		String url = searchConfiguration.getBaseConvertUrl() + "convert/v1/location";
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url).queryParam("address", address);
 		RequestEntity<String> request = new RequestEntity<String>(HttpMethod.PUT, builder.build().toUri());
 		ResponseEntity<RequestLocationDto> response = restTemplate.exchange(request, RequestLocationDto.class);
 		return response.getBody();
 	}
-	
+
 	public ConvertedPostDto convertRequestDtoToConvertedPostDto(RequestDto requestDto) {
 		RestTemplate restTemplate = searchConfiguration.restTemplate();
-		String url = searchConfiguration.getBaseConvertUrl();
+		String url = searchConfiguration.getBaseConvertUrl() + "convert/v1/post";
 		try {
 			HttpHeaders newHeaders = new HttpHeaders();
 			newHeaders.add("Content-Type", "application/json");
@@ -78,6 +75,5 @@ public class SearchUtil implements Serializable {
 			throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "Converting post is failed");
 		}
 	}
-	
-	
+
 }
