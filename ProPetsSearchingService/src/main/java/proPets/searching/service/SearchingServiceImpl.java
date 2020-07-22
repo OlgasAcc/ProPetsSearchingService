@@ -56,7 +56,8 @@ public class SearchingServiceImpl implements SearchingService {
 					//TODO: .IsAuthorSubscribed(true)
 					.build();
 		
-		searchingServiceRepository.save(postSearchData);		
+		searchingServiceRepository.save(postSearchData);
+		System.out.println("saved in DS");
 	}
 	
 	@Override
