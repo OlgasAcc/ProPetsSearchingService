@@ -19,6 +19,7 @@ import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.ResponseDto;
 import proPets.searching.dto.UserRemoveDto;
+import proPets.searching.model.PostSearchData;
 import proPets.searching.service.SearchingService;
 
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -133,10 +134,10 @@ public class SearchingServiceController {
 //	}
 //	
 //	//test
-//	@GetMapping("/getAll")
-//	public Iterable<PostSearchData>getAllFromDB(){
-//		return searchingService.getAllFromDB();
-//	}
+	@GetMapping("/getAll")
+	public Iterable<PostSearchData>getAllFromDB(){
+		return searchingServiceRepository.findAll();
+	}
 //	
 //	//test
 //	@GetMapping("/get/{id}")

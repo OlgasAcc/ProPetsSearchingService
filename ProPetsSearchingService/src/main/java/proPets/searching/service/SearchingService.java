@@ -3,6 +3,7 @@ package proPets.searching.service;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.UserRemoveDto;
 import proPets.searching.exceptions.PostNotFoundException;
+import proPets.searching.model.PostSearchData;
 
 public interface SearchingService {
 
