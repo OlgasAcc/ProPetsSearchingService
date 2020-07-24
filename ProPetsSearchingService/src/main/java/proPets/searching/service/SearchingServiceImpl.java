@@ -89,9 +89,7 @@ public class SearchingServiceImpl implements SearchingService {
 	
 	//user's manual searching in the current db by flag
 	@Override
-	public String[] searchPostsByMatchingFeatures(String postId, String flag) throws PostNotFoundException {
-		PostSearchData post = searchingServiceRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
-		String distFeatures = post.getDistFeatures();		
+	public String[] searchPostsByMatchingFeatures(String distFeatures, String flag) throws PostNotFoundException {	
 		//String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
 		return searchingServiceRepository.getStatsByFeatures(distFeatures).stream()
 				.filter(p -> p.getFlag().equalsIgnoreCase(flag))
