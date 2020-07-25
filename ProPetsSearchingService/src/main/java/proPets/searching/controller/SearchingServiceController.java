@@ -58,13 +58,12 @@ public class SearchingServiceController {
 	@GetMapping("/location")
 	public ResponseEntity<ResponseDto> getMatchingPostsByDistance(@RequestParam("address") String address,
 			@RequestParam("flag") String flag) throws Exception {
-		String flagToSearch = flag.equalsIgnoreCase("lost") ? "found" : "lost";
-		String[] arr = searchingService.searchPostsByDistance(address, flagToSearch); // для ручного поиска по локации: на странице клиент ищет посты в той же базе
+		String[] arr = searchingService.searchPostsByDistance(address, flag); // для ручного поиска по локации: на странице клиент ищет посты в той же базе
 		ResponseDto body = new ResponseDto(arr);
 		return ResponseEntity.ok().body(body);
 	}
 	
-	@GetMapping("/stats/features")
+	@GetMapping("/features")
 	public String[] getMatchingPostsIdsByFeatures(@RequestParam("features") String features,
 			@RequestParam("flag") String flag) throws Exception {
 		return searchingService.searchPostsByMatchingFeatures(features, flag);
@@ -79,9 +78,9 @@ public class SearchingServiceController {
 		return ResponseEntity.ok().body(body);
 	}
 	
-	// для теста: ручной вызов вместо Кафки
+	// for test purpose: to call from email service instead for using Kafka
 	@GetMapping("/notification")
-	public ResponseEntity<ResponseDto> getMatchingPostsAuthors(@RequestParam("post") String postId,
+	public ResponseEntity<ResponseDto> getMatchingPostsAuthors(@RequestParam("postId") String postId,
 			@RequestParam("flag") String flag) throws Exception {
 		String[] authorsEmails = searchingService.getAuthorsOfMatchingPosts(postId, flag);
 		ResponseDto body = new ResponseDto(authorsEmails);
@@ -98,56 +97,27 @@ public class SearchingServiceController {
 	public ResponseEntity<String> unsubcribeFromNotifications(@PathVariable String authorId) throws Exception {		
 		searchingService.unsubscribeFromEmailNotification(authorId);
 		return ResponseEntity.ok(authorId);
-	}
-	
-	
+	}		
 	
 	
 //____________________________________________________________
 	
-	
-//	//test
-//	@GetMapping("/stats")
-//	public Iterable<PostSearchData> getIntersectionStats(@RequestParam("postId") String postId,
-//			@RequestParam("flag") String flag) throws Exception {
-//		return searchingService.getIntersectionStats(postId, flag);
-//	}
-//	
-//	//test
-//	@GetMapping("/stats/type_features")
-//	public Iterable<PostSearchData> getIntersectionStatsByTypeAndFeatures(@RequestParam("postId") String postId,
-//			@RequestParam("flag") String flag) throws Exception {
-//		return searchingService.getIntersectionStatsByTypeAndFeatures(postId, flag);
-//	}
-//	
-//	//test
-//	@GetMapping("/find")
-//	public String[] getPostsByDist(@RequestParam("address") String address,
-//			@RequestParam("flag") String flag) throws Exception {
-//		return searchingService.searchPostsByDistance(address, flag);
-//	}
-//	
-//	//test
-//	@PostMapping("/add")
-//	public PostSearchData addPost1(@RequestBody RequestDto requestDto) throws Exception {
-//		return searchingService.addPost1(requestDto);
-//	}
-//	
 //	//test
 	@GetMapping("/getAll")
 	public Iterable<PostSearchData>getAllFromDB(){
 		return searchingServiceRepository.findAll();
 	}
-//	
-//	//test
-//	@GetMapping("/get/{id}")
-//	public PostSearchData getById(@PathVariable String id){
-//		return searchingService.getById(id);
-//	}
-//	
-//	//test
-//	@DeleteMapping("/clean")
-//	public void cleanES(){
-//		searchingService.cleanES();
-//	}
+	
+	//test
+	@GetMapping("/get/{id}")
+	public PostSearchData getById(@PathVariable String id){
+		return searchingService.getById(id);
+	}
+	
+	//test
+	@DeleteMapping("/clean")
+	public void cleanES(){
+		searchingService.cleanES();
+	}
+
 }

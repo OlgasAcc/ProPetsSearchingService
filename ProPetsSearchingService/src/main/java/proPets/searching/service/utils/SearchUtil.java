@@ -39,6 +39,7 @@ public class SearchUtil implements Serializable {
 		PostSearchData post = searchingServiceRepository.findById(postId)
 				.orElseThrow(() -> new PostNotFoundException());
 		String type = post.getType();
+		String flagToSearch = post.getFlag().equalsIgnoreCase("lost") ? "found" : "lost";
 		double distance = searchConfiguration.getDistanceGeneral();
 		if (type.equalsIgnoreCase("cat")) {
 			distance = searchConfiguration.getDistanceCat();
@@ -49,7 +50,8 @@ public class SearchUtil implements Serializable {
 		if (type.equalsIgnoreCase("parrot")) {
 			distance = searchConfiguration.getDistanceBird();
 		}
-		return searchingServiceRepository.getIntersectedPosts(type, post.getDistFeatures(), post.getLocation().getLat(), post.getLocation().getLon(), distance, post.getPicturesTags().toString());
+		return searchingServiceRepository.getIntersectedPosts(type, post.getDistFeatures(), post.getLocation().getLat(),
+				post.getLocation().getLon(), distance, post.getPicturesTags().toString(), flagToSearch);
 	}
 
 	public RequestLocationDto getRequestLocationDtoByAddress(String address) {
