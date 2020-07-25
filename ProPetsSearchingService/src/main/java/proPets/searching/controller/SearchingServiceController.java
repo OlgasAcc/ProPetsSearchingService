@@ -64,9 +64,11 @@ public class SearchingServiceController {
 	}
 	
 	@GetMapping("/features")
-	public String[] getMatchingPostsIdsByFeatures(@RequestParam("features") String features,
+	public ResponseEntity<ResponseDto> getMatchingPostsIdsByFeatures(@RequestParam("features") String features,
 			@RequestParam("flag") String flag) throws Exception {
-		return searchingService.searchPostsByMatchingFeatures(features, flag);
+		String[] arr = searchingService.searchPostsByMatchingFeatures(features, flag);
+		ResponseDto body = new ResponseDto(arr);
+		return ResponseEntity.ok().body(body);
 	}
 		
 	//его запустит ЛФ, когда юзер нажмет на ссылку в письме, чтобы отрисовать совпавшие посты на фронте
