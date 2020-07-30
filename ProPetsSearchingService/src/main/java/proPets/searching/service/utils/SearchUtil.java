@@ -1,6 +1,5 @@
 package proPets.searching.service.utils;
 
-import java.io.Serializable;
 import java.net.URI;
 import java.util.Set;
 
@@ -25,15 +24,13 @@ import proPets.searching.exceptions.PostNotFoundException;
 import proPets.searching.model.PostSearchData;
 
 @Component
-public class SearchUtil implements Serializable {
+public class SearchUtil {
 
 	@Autowired
 	SearchingServiceRepository searchingServiceRepository;
 	
 	@Autowired
 	SearchingConfiguration searchConfiguration;
-
-	private static final long serialVersionUID = -2550185165626007488L;
 	
 	public Set<PostSearchData> searchMatchingPosts(String postId) throws PostNotFoundException {
 		PostSearchData post = searchingServiceRepository.findById(postId)
