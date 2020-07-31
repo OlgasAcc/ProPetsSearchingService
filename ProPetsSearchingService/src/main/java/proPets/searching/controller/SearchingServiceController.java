@@ -19,10 +19,10 @@ import proPets.searching.dao.SearchingServiceRepository;
 import proPets.searching.dto.RequestDto;
 import proPets.searching.dto.ResponseDto;
 import proPets.searching.dto.UserRemoveDto;
+import proPets.searching.exceptions.PostNotFoundException;
 import proPets.searching.model.PostSearchData;
 import proPets.searching.service.SearchingService;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/search/v1")
 
@@ -112,7 +112,7 @@ public class SearchingServiceController {
 	
 	//test
 	@GetMapping("/get/{id}")
-	public PostSearchData getById(@PathVariable String id){
+	public PostSearchData getById(@PathVariable String id) throws PostNotFoundException{
 		return searchingService.getById(id);
 	}
 	

@@ -26,7 +26,7 @@ public interface SearchingService {
 	// TEST
 	//_______________________
 
-	PostSearchData getById(String id);
+	PostSearchData getById(String id) throws PostNotFoundException;
 
 	void cleanES();
 	

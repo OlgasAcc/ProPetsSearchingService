@@ -139,8 +139,8 @@ public class SearchingServiceImpl implements SearchingService {
 	}
 
 	//test
-	public PostSearchData getById(String id) {
-		PostSearchData post = searchingServiceRepository.findById(id).orElse(null);
+	public PostSearchData getById(String id) throws PostNotFoundException {
+		PostSearchData post = searchingServiceRepository.findById(id).orElseThrow(()->new PostNotFoundException());
 		return post;
 	}
 	
