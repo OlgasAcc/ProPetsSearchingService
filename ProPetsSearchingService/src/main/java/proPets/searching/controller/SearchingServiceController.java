@@ -91,8 +91,8 @@ public class SearchingServiceController {
 	
 	// called by Accounting Service for removing all the "tail" by removed author in ES db
 	@DeleteMapping("/cleaner")
-	public ResponseEntity<String> cleanPostsByAuthor(@RequestBody UserRemoveDto userRemoveDto) throws Exception {		
-		return ResponseEntity.ok(searchingService.removePostsByAuthor(userRemoveDto));
+	public String cleanPostsByAuthor(@RequestBody UserRemoveDto userRemoveDto) throws Exception {		
+		return searchingService.removePostsByAuthor(userRemoveDto);
 	}
 	
 	@PutMapping("/unsubscribe/{authorId}")

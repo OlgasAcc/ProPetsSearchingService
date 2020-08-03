@@ -18,52 +18,52 @@ import proPets.searching.model.PostSearchData;
 public class SearchingConfiguration {
 
 	Map<String, PostSearchData> posts = new ConcurrentHashMap<>();
-	
+
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
-	
+
 	@Bean
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper();
 	}
-	
+
 	@Value("${distance.dog}")
 	double distanceDog;
-	
+
 	@RefreshScope
 	public double getDistanceDog() {
 		return distanceDog;
 	}
-	
+
 	@Value("${distance.cat}")
 	double distanceCat;
-	
+
 	@RefreshScope
 	public double getDistanceCat() {
 		return distanceCat;
 	}
-	
+
 	@Value("${distance.bird}")
 	double distanceBird;
-	
+
 	@RefreshScope
 	public double getDistanceBird() {
 		return distanceBird;
 	}
-	
+
 	@Value("${distance.general}")
 	double distanceGeneral;
-	
+
 	@RefreshScope
 	public double getDistanceGeneral() {
 		return distanceGeneral;
 	}
-	
+
 	@Value("${base.convert.url}")
 	String baseConvertUrl;
-	
+
 	@RefreshScope
 	public String getBaseConvertUrl() {
 		return baseConvertUrl;

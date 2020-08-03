@@ -12,6 +12,9 @@ public interface SearchingServiceRepository extends ElasticsearchRepository<Post
 
 	List<PostSearchData> findAll();
 	
+	//@Query("{\"bool\":{\"must\":{\"term\":{\"email\":\"?0\"}}}}")
+	List<PostSearchData> findByEmail(String email);
+	
 	@Query("{\"bool\":{\"must\":{\"term\":{\"flag\":\"?3\"}},\"filter\":{\"geo_distance\":{\"distance\":\"?2km\",\"location\":{\"lat\":?0,\"lon\":?1}}}}}")
 	Set<PostSearchData> findIdByDistance(double latitude, double longitude, double distance, String flag);
 	

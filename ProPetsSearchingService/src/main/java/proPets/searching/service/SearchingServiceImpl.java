@@ -113,10 +113,12 @@ public class SearchingServiceImpl implements SearchingService {
 	// for cleaning the tail of posts of removed author
 	@Override
 	public String removePostsByAuthor(UserRemoveDto userRemoveDto) {
+		System.out.println("removing");
 		String authorId = userRemoveDto.getUserId();			
-		searchingServiceRepository.findAll().stream()
-					.filter(p->p.getEmail().equalsIgnoreCase(authorId))
-					.forEach(post->searchingServiceRepository.delete(post));	
+		searchingServiceRepository.findByEmail(authorId).stream()				
+					.forEach(post->searchingServiceRepository.delete(post));
+		System.err.println(searchingServiceRepository.findByEmail(authorId).isEmpty());
+		System.out.println("removed all posts");
 		return authorId;
 	}
 	
@@ -125,6 +127,8 @@ public class SearchingServiceImpl implements SearchingService {
 		// TODO найти все посты по автору, в стриме поменять им поле IsAuthorSubscribed на false
 		
 	}
+	
+	
 
 	
 	
